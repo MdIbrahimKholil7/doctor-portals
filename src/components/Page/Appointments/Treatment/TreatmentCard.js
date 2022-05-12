@@ -1,6 +1,6 @@
 import React from 'react';
 
-const TreatmentCard = ({ service }) => {
+const TreatmentCard = ({ service, setTreatment }) => {
     const { name, slots } = service
     return (
         <div>
@@ -10,7 +10,11 @@ const TreatmentCard = ({ service }) => {
                     <p>{slots[0]}</p>
                     <p className={`${!slots.length && 'text-red-500'} uppercase`}>{slots.length ? `${slots.length > 1 ? slots.length + ' spaces' : slots.length + ' space'} available` : 'Try another day'}</p>
                     <div className="card-actions">
-                        <button className="bgGradient px-5 py-2 text-white rounded-lg text-[16px]">Book Appointment</button>
+                        <label
+                            for="bookingModal"
+                            className="bgGradient px-5 py-2 text-white rounded-lg text-[16px]"
+                            onClick={() => setTreatment(service)}
+                        >Book Appointment</label>
                     </div>
                 </div>
             </div>
