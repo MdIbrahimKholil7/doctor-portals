@@ -1,11 +1,7 @@
 module.exports = {
   content: ["./src/**/*.{html,js}"],
   theme: {
-    extend: {
-      backgroundColor:{
-        bgGradient:'gradient bg-gradient-to-r from-secondary to-primary'
-      }
-    },
+    extend: {},
   },
   daisyui: {
     themes: [
@@ -16,9 +12,6 @@ module.exports = {
           accent: "#3A4256",
           neutral: "#3d4451",
           "base-100": "#ffffff",
-          gradient:theme=>{
-            
-          }
         },
       },
       "dark",
