@@ -10,10 +10,9 @@ const Treatment = ({ selected }) => {
             .then(data => setServices(data))
     }, [])
     return (
-        <div className='px-5 mt-9'>
+        <div className='px-5 mt-9 mb-32'>
             <p className='text-center text-xl text-secondary font-bold'>Available Appointment on {format(selected, 'PP')}</p>
             <div className='grid grid-cols-1 lg:grid-cols-3 gap-5 mt-12 lg:mt-20'>
-
                 {
                     services.map(service => <TreatmentCard
                         key={service._id}
