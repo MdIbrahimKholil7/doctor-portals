@@ -1,12 +1,16 @@
 import React from 'react';
 import { useForm } from "react-hook-form";
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuthState, useCreateUserWithEmailAndPassword, useSignInWithGoogle } from 'react-firebase-hooks/auth';
 import auth from '../../../../_firebase_init';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import Loading from '../../../Shared/Loading/Loading'
 const SignUp = () => {
     const [user]=useAuthState(auth)
     const { register, handleSubmit, watch, formState: { errors } } = useForm();
     const [signInWithGoogle, gUser, gLoading, gError] = useSignInWithGoogle(auth);
+    const navigate=useNavigate()
     const [
         createUserWithEmailAndPassword,
         sUser,
@@ -14,9 +18,20 @@ const SignUp = () => {
         error,
       ] = useCreateUserWithEmailAndPassword(auth,{sendEmailVerification:true});
       console.log(user)
+      if(error){
+          console.log(error)
+      }
+      if(loading || gLoading){
+          return <Loading/>
+      }
+      if(user){
+        navigate('/')
+      }
+
     const onSubmit = data => {
         console.log(data);
         createUserWithEmailAndPassword(data.email,data.password)
+        toast(<p>Please check your email for verification</p>)
         console.log('user created')
     }
     return (
@@ -112,6 +127,7 @@ const SignUp = () => {
                         </div>
                         <div className="divider">OR</div>
                         <button onClick={() => signInWithGoogle()} className="btn hover:bg-accent btn-outline w-full">Continue With Google</button>
+                        <ToastContainer/>
                     </form>
 
                 </div>
