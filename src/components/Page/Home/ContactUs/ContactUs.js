@@ -18,7 +18,7 @@ const ContactUs = () => {
                 <form className='w-full text-center'>
                     <input type="email" placeholder="Email address" className="input block input-bordered w-full " />
                     <input type="text" placeholder="Subject" className="input input-bordered w-full block my-5" />
-                    <textarea class="textarea textarea-bordered w-full h-[136px]"  placeholder="Your message"></textarea>
+                    <textarea className="textarea textarea-bordered w-full h-[136px]"  placeholder="Your message"></textarea>
                 </form>
             </div>
         </div>

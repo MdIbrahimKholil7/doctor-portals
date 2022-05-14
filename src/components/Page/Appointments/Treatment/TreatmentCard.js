@@ -10,14 +10,14 @@ const TreatmentCard = ({ service, setTreatment }) => {
                     <p>{slots[0]}</p>
                     <p > {slots.length} {slots.length > 1 ? 'spaces' : 'space'} available
                     </p>
-                    {!slots.length && <><span className={`${!slots.length && 'text-red-500'} uppercase`}>Try another day</span></>}
+                    {!slots.length && <><span className={`${!slots.length && 'text-red-500'} uppercase text-[12px]`}>Try another day</span></>}
                     <div className="card-actions">
                         
                     <label
                         for="bookingModal"
                         disabled={slots.length === 0}
                         onClick={() => setTreatment(service)}
-                        class={`btn btn-sm btn-secondary text-white uppercase ${slots.length === 0 ? 'bg-gray-500':'bgGradient'}`}
+                        className={`btn btn-sm btn-secondary text-white uppercase ${slots.length === 0 ? 'bg-gray-500':'bgGradient'}`}
                         >Book Appointment</label>
                         
                     </div>
