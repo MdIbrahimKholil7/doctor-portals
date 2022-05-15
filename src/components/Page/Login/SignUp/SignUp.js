@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useForm } from "react-hook-form";
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuthState, useCreateUserWithEmailAndPassword, useSignInWithGoogle, useUpdateProfile } from 'react-firebase-hooks/auth';
@@ -19,24 +19,26 @@ const SignUp = () => {
     ] = useCreateUserWithEmailAndPassword(auth, { sendEmailVerification: true });
     const navigate = useNavigate()
     const location = useLocation()
-    let from = location.state?.from?.pathname || "/";
+    let from = location?.state?.from?.pathname || "/";
+    useEffect(() => {
+        if (createUser || gUser) {
+            navigate(from)
+        }
+
+    }, [createUser, navigate, from, gUser])
     let userError;
-   
     if (loading || gLoading || updating) {
         return <Loading />
     }
     if (gError || error) {
         userError = error.message || gError.message
     }
-    if (createUser) {
-        navigate(from)
-    }
 
-    const onSubmit = async data => {
-        console.log(data);
-        await createUserWithEmailAndPassword(data.email, data.password)
+    const onSubmit = data => {
+        console.log(data)
+        createUserWithEmailAndPassword(data.email, data.password)
         toast(<p>Please check your email for verification</p>)
-        await updateProfile({ displayName: data.name });
+        /*  await updateProfile({ displayName: data.name }); */
         console.log('user created')
     }
     return (
@@ -62,16 +64,16 @@ const SignUp = () => {
                                         value: 3,
                                         message: 'Name must be 4 character'
                                     },
-                                    /* validate: {
+                                    validate: {
                                         number: v => typeof (v) === 'number' && 'Number not allowed',
                                         message: v => !v && ['email']
-                                    } */
+                                    }
                                 })}
                             />
 
                             {errors.name?.type === 'required' && <small className='text-red-500 mt-2'>{errors.name.message}</small>}
                             {errors.name?.type === 'minLength' && <small className='text-red-500 mt-2'>{errors.name.message}</small>}
-                            {/*  { {errors.name?.type === 'validate' && <small className='text-red-500 mt-2'>{errors.name.message}</small>}} */}
+                            {errors.name?.type === 'validate' && <small className='text-red-500 mt-2'>{errors.name.message}</small>}
                         </div>
                         <div className="form-control ">
                             <label className="label">

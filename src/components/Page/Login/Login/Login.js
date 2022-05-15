@@ -1,11 +1,11 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useAuthState, useSignInWithEmailAndPassword, useSignInWithGoogle } from 'react-firebase-hooks/auth';
 import { useForm } from "react-hook-form";
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import auth from '../../../../_firebase_init';
 import Loading from '../../../Shared/Loading/Loading';
 const Login = () => {
-    const [user]=useAuthState(auth)
+    const [user] = useAuthState(auth)
     const { register, handleSubmit, watch, formState: { errors } } = useForm();
     const [signInWithGoogle, gUser, gLoading, gError] = useSignInWithGoogle(auth);
     const [
@@ -13,19 +13,22 @@ const Login = () => {
         loginUser,
         loading,
         error,
-      ] = useSignInWithEmailAndPassword(auth);
-      const navigate=useNavigate()
-      const location=useLocation()
-      let from = location.state?.from?.pathname || "/";
-     if(loading || gLoading){
-         return <Loading/>
-     }
-     if(loginUser || gUser){
-        navigate(from)
-     }
+    ] = useSignInWithEmailAndPassword(auth);
+    const navigate = useNavigate()
+    const location = useLocation()
+    let from = location.state?.from?.pathname || "/";
+    useEffect(() => {
+        if (loginUser || gUser) {
+            navigate(from)
+        }
+    }, [loginUser,gUser,navigate,from])
+
+    if (loading || gLoading) {
+        return <Loading />
+    }
+
     const onSubmit = data => {
-        signInWithEmailAndPassword(data.email,data.password)
-        console.log('login')
+        signInWithEmailAndPassword(data.email, data.password)
     }
     return (
         <div className='flex justify-center items-center h-screen '>
@@ -89,7 +92,7 @@ const Login = () => {
                             <p>New to Doctors Portal ? <Link className='underline text-green-700' to='/signup'>Create New Account</Link></p>
                         </div>
                         <div className="divider">OR</div>
-                        <button onClick={()=>signInWithGoogle()} className="btn hover:bg-accent btn-outline w-full">Continue With Google</button>
+                        <button onClick={() => signInWithGoogle()} className="btn hover:bg-accent btn-outline w-full">Continue With Google</button>
                     </form>
                 </div>
             </div>

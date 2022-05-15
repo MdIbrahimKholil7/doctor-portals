@@ -20,7 +20,7 @@ const GetAppointment = ({selected,setSelected}) => {
                     <DayPicker
                         mode="single"
                         selected={selected}
-                        onSelect={setSelected}
+                        onDayClick={setSelected}
                         
                     />
                     

@@ -1,12 +1,56 @@
 import { format } from 'date-fns';
 import React from 'react';
+import { useAuthState } from 'react-firebase-hooks/auth';
+import auth from '../../../../_firebase_init';
+import Swal from 'sweetalert2'
+import withReactContent from 'sweetalert2-react-content'
+import axios from 'axios';
 
-const OpenModal = ({ treatment, setTreatment, selected }) => {
-    const { name, slots } = treatment || {}
-    const handleForm = event => {
+const OpenModal = ({ treatment, setTreatment, selected,refetch }) => {
+    const { name, slots,_id } = treatment || {}
+    const [user] = useAuthState(auth)
+    // const MySwal = withReactContent(Swal)
+    const handleForm = async event => {
         event.preventDefault()
+        console.log(event.target.slot.value)
+        const book = {
+            treatmentId:_id,
+            treatmentName: name,
+            slot:event.target.slot.value,
+            date: format(selected, 'PP'),
+            patientName: user.displayName,
+            email: user.email,
+            phone:event.target.number.value,
+            
+        }
+        try{
+           const {data}= await axios.post('http://localhost:5000/book', book)
+            console.log(data)
+                if(data.success){
+                    Swal.fire({
+                        position: 'top-center',
+                        icon: 'success',
+                        title: 'Your appointment successful',
+                        showConfirmButton: false,
+                        timer: 2000
+                    })
+                }else{
+                    Swal.fire({
+                        position: 'top-center',
+                        icon: 'error',
+                        title:`You have already booked this appointment on ${data?.result?.date}`,
+                        showConfirmButton: false,
+                        timer: 2000
+                    })
+                }
+           
+        }catch(error){
+            console.log(error)
+        }
+        refetch()
         setTreatment(null)
     }
+
     return (
         <div>
             <input type="checkbox" id="bookingModal" className="modal-toggle" />
@@ -17,14 +61,14 @@ const OpenModal = ({ treatment, setTreatment, selected }) => {
                     <div className='mt-12'>
                         <form onSubmit={handleForm} className='grid gap-5'>
                             <input type="text" name='date' value={format(selected, 'PP')} placeholder="Type here" className="input input-bordered w-full" disabled />
-                            <select className="input input-bordered w-full" >
+                            <select name='slot' className="input input-bordered w-full" >
                                 {
-                                   slots.length && slots.map((elem, index) => <option value={elem} key={index}>{elem}</option>)
+                                    slots.length && slots.map((elem, index) => <option  value={elem} key={index}>{elem}</option>)
                                 }
                             </select>
-                            <input type="text" name='name' placeholder="Full Name" className="input input-bordered w-full" required />
+                            <input type="text" name='name' value={user.displayName} readOnly placeholder="Full Name" className="input input-bordered w-full" required />
                             <input type="number" name='number' placeholder="Phone Number" className="input input-bordered w-full" required />
-                            <input type="email" name='email' placeholder="Email" className="input input-bordered w-full" required />
+                            <input type="email" value={user.email} readOnly name='email' placeholder="Email" className="input input-bordered w-full" required />
                             <input type="submit" value='SUBMIT' className='w-full bg-accent text-white rounded-lg py-3' />
                         </form>
                     </div>
