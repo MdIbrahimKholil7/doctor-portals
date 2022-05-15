@@ -1,10 +1,31 @@
 import React from 'react';
+import { useAuthState, useSignInWithEmailAndPassword, useSignInWithGoogle } from 'react-firebase-hooks/auth';
 import { useForm } from "react-hook-form";
-import { Link } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import auth from '../../../../_firebase_init';
+import Loading from '../../../Shared/Loading/Loading';
 const Login = () => {
+    const [user]=useAuthState(auth)
     const { register, handleSubmit, watch, formState: { errors } } = useForm();
+    const [signInWithGoogle, gUser, gLoading, gError] = useSignInWithGoogle(auth);
+    const [
+        signInWithEmailAndPassword,
+        loginUser,
+        loading,
+        error,
+      ] = useSignInWithEmailAndPassword(auth);
+      const navigate=useNavigate()
+      const location=useLocation()
+      let from = location.state?.from?.pathname || "/";
+     if(loading || gLoading){
+         return <Loading/>
+     }
+     if(loginUser || gUser){
+        navigate(from)
+     }
     const onSubmit = data => {
-        console.log(data);
+        signInWithEmailAndPassword(data.email,data.password)
+        console.log('login')
     }
     return (
         <div className='flex justify-center items-center h-screen '>
@@ -68,9 +89,8 @@ const Login = () => {
                             <p>New to Doctors Portal ? <Link className='underline text-green-700' to='/signup'>Create New Account</Link></p>
                         </div>
                         <div className="divider">OR</div>
-                        <button className="btn hover:bg-accent btn-outline w-full">Continue With Google</button>
+                        <button onClick={()=>signInWithGoogle()} className="btn hover:bg-accent btn-outline w-full">Continue With Google</button>
                     </form>
-
                 </div>
             </div>
         </div>

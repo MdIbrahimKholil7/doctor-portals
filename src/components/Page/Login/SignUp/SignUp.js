@@ -1,37 +1,42 @@
 import React from 'react';
 import { useForm } from "react-hook-form";
-import { Link, useNavigate } from 'react-router-dom';
-import { useAuthState, useCreateUserWithEmailAndPassword, useSignInWithGoogle } from 'react-firebase-hooks/auth';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useAuthState, useCreateUserWithEmailAndPassword, useSignInWithGoogle, useUpdateProfile } from 'react-firebase-hooks/auth';
 import auth from '../../../../_firebase_init';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Loading from '../../../Shared/Loading/Loading'
 const SignUp = () => {
-    const [user]=useAuthState(auth)
+    const [user] = useAuthState(auth)
     const { register, handleSubmit, watch, formState: { errors } } = useForm();
     const [signInWithGoogle, gUser, gLoading, gError] = useSignInWithGoogle(auth);
-    const navigate=useNavigate()
+    const [updateProfile, updating, updateError] = useUpdateProfile(auth);
     const [
         createUserWithEmailAndPassword,
-        sUser,
+        createUser,
         loading,
         error,
-      ] = useCreateUserWithEmailAndPassword(auth,{sendEmailVerification:true});
-      console.log(user)
-      if(error){
-          console.log(error)
-      }
-      if(loading || gLoading){
-          return <Loading/>
-      }
-      if(user){
-        navigate('/')
-      }
+    ] = useCreateUserWithEmailAndPassword(auth, { sendEmailVerification: true });
+    const navigate = useNavigate()
+    const location = useLocation()
+    let from = location.state?.from?.pathname || "/";
+    let userError;
+   
+    if (loading || gLoading || updating) {
+        return <Loading />
+    }
+    if (gError || error) {
+        userError = error.message || gError.message
+    }
+    if (createUser) {
+        navigate(from)
+    }
 
-    const onSubmit = data => {
+    const onSubmit = async data => {
         console.log(data);
-        createUserWithEmailAndPassword(data.email,data.password)
+        await createUserWithEmailAndPassword(data.email, data.password)
         toast(<p>Please check your email for verification</p>)
+        await updateProfile({ displayName: data.name });
         console.log('user created')
     }
     return (
@@ -66,7 +71,7 @@ const SignUp = () => {
 
                             {errors.name?.type === 'required' && <small className='text-red-500 mt-2'>{errors.name.message}</small>}
                             {errors.name?.type === 'minLength' && <small className='text-red-500 mt-2'>{errors.name.message}</small>}
-                          {/*  { {errors.name?.type === 'validate' && <small className='text-red-500 mt-2'>{errors.name.message}</small>}} */}
+                            {/*  { {errors.name?.type === 'validate' && <small className='text-red-500 mt-2'>{errors.name.message}</small>}} */}
                         </div>
                         <div className="form-control ">
                             <label className="label">
@@ -120,14 +125,14 @@ const SignUp = () => {
                             {errors.password?.type === 'minLength' && <small className='text-red-500 mt-2'>{errors.password.message}</small>}
 
                         </div>
-
+                        <p className='text-red-500 mb-2'>{userError}</p>
                         <input type="submit" value='Sign Up' className='btn w-full mt-5' />
                         <div className='mt-4 text-center'>
                             <p>Already have an account ? <Link className='underline text-green-700' to='/login'>Login</Link></p>
                         </div>
                         <div className="divider">OR</div>
                         <button onClick={() => signInWithGoogle()} className="btn hover:bg-accent btn-outline w-full">Continue With Google</button>
-                        <ToastContainer/>
+                        <ToastContainer />
                     </form>
 
                 </div>
