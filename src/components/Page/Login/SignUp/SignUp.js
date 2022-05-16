@@ -6,8 +6,11 @@ import auth from '../../../../_firebase_init';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Loading from '../../../Shared/Loading/Loading'
+import useToken from '../../../hooks/useToken';
 const SignUp = () => {
     const [user] = useAuthState(auth)
+    const [token]=useToken(user)
+    // const [users]=useAuthState(auth)
     const { register, handleSubmit, watch, formState: { errors } } = useForm();
     const [signInWithGoogle, gUser, gLoading, gError] = useSignInWithGoogle(auth);
     const [updateProfile, updating, updateError] = useUpdateProfile(auth);
@@ -19,13 +22,7 @@ const SignUp = () => {
     ] = useCreateUserWithEmailAndPassword(auth, { sendEmailVerification: true });
     const navigate = useNavigate()
     const location = useLocation()
-    let from = location?.state?.from?.pathname || "/";
-    useEffect(() => {
-        if (createUser || gUser) {
-            navigate(from)
-        }
-
-    }, [createUser, navigate, from, gUser])
+    let from = location?.state?.from || '/';
     let userError;
     if (loading || gLoading || updating) {
         return <Loading />
@@ -33,13 +30,14 @@ const SignUp = () => {
     if (gError || error) {
         userError = error.message || gError.message
     }
-
-    const onSubmit = data => {
-        console.log(data)
-        createUserWithEmailAndPassword(data.email, data.password)
-        toast(<p>Please check your email for verification</p>)
-        /*  await updateProfile({ displayName: data.name }); */
-        console.log('user created')
+   if(token){
+    navigate(from, { replace: true })
+   }
+    const onSubmit = async data => {
+        await createUserWithEmailAndPassword(data.email, data.password);
+        await updateProfile({ displayName: data.name });
+        toast(<p>Email verification sent</p>)
+        console.log('update done');
     }
     return (
         <div className='flex justify-center items-center h-screen '>
@@ -47,96 +45,79 @@ const SignUp = () => {
                 <div className="card-body">
                     <h2 className=" text-accent text-2xl font-bold text-center">Sign Up</h2>
                     <form onSubmit={handleSubmit(onSubmit)}>
-                        <div className="form-control ">
+                        <div className="form-control w-full max-w-xs">
                             <label className="label">
                                 <span className="label-text">Name</span>
                             </label>
                             <input
                                 type="text"
-                                placeholder="Name"
-                                className="input input-bordered w-full  "
+                                placeholder="Your Name"
+                                className="input input-bordered w-full max-w-xs"
                                 {...register("name", {
                                     required: {
                                         value: true,
-                                        message: 'Name is required'
-                                    },
-                                    minLength: {
-                                        value: 3,
-                                        message: 'Name must be 4 character'
-                                    },
-                                    validate: {
-                                        number: v => typeof (v) === 'number' && 'Number not allowed',
-                                        message: v => !v && ['email']
+                                        message: 'Name is Required'
                                     }
                                 })}
                             />
-
-                            {errors.name?.type === 'required' && <small className='text-red-500 mt-2'>{errors.name.message}</small>}
-                            {errors.name?.type === 'minLength' && <small className='text-red-500 mt-2'>{errors.name.message}</small>}
-                            {errors.name?.type === 'validate' && <small className='text-red-500 mt-2'>{errors.name.message}</small>}
+                            <label className="label">
+                                {errors.name?.type === 'required' && <span className="label-text-alt text-red-500">{errors.name.message}</span>}
+                            </label>
                         </div>
-                        <div className="form-control ">
+
+                        <div className="form-control w-full max-w-xs">
                             <label className="label">
                                 <span className="label-text">Email</span>
                             </label>
                             <input
                                 type="email"
-                                placeholder="Email"
-                                className="input input-bordered w-full  "
+                                placeholder="Your Email"
+                                className="input input-bordered w-full max-w-xs"
                                 {...register("email", {
                                     required: {
                                         value: true,
-                                        message: 'Email is required'
+                                        message: 'Email is Required'
                                     },
                                     pattern: {
-                                        value: /^[\w._-]+[+]?[\w._-]+@[\w.-]+\.[a-zA-Z]{2,6}$/,
-                                        message: 'Please provide a valid Email'
-                                    },
-
+                                        value: /[a-z0-9]+@[a-z]+\.[a-z]{2,3}/,
+                                        message: 'Provide a valid Email'
+                                    }
                                 })}
                             />
-
-                            {errors.email?.type === 'required' && <small className='text-red-500 mt-2'>{errors.email.message}</small>}
-                            {errors.email?.type === 'pattern' && <small className='text-red-500 mt-2'>{errors.email.message}</small>}
-
-
+                            <label className="label">
+                                {errors.email?.type === 'required' && <span className="label-text-alt text-red-500">{errors.email.message}</span>}
+                                {errors.email?.type === 'pattern' && <span className="label-text-alt text-red-500">{errors.email.message}</span>}
+                            </label>
                         </div>
-                        <div className="form-control w-full">
+                        <div className="form-control w-full max-w-xs">
                             <label className="label">
                                 <span className="label-text">Password</span>
                             </label>
                             <input
                                 type="password"
                                 placeholder="Password"
-                                className="input input-bordered w-full "
+                                className="input input-bordered w-full max-w-xs"
                                 {...register("password", {
                                     required: {
                                         value: true,
-                                        message: 'Password is required'
+                                        message: 'Password is Required'
                                     },
                                     minLength: {
                                         value: 6,
-                                        message: 'Password should contain at least 7 character'
+                                        message: 'Must be 6 characters or longer'
                                     }
                                 })}
                             />
-
-                            {errors.password?.type === 'required' && <small className='text-red-500 mt-2'>{errors.password.message}</small>}
-
-
-                            {errors.password?.type === 'minLength' && <small className='text-red-500 mt-2'>{errors.password.message}</small>}
-
+                            <label className="label">
+                                {errors.password?.type === 'required' && <span className="label-text-alt text-red-500">{errors.password.message}</span>}
+                                {errors.password?.type === 'minLength' && <span className="label-text-alt text-red-500">{errors.password.message}</span>}
+                            </label>
                         </div>
-                        <p className='text-red-500 mb-2'>{userError}</p>
-                        <input type="submit" value='Sign Up' className='btn w-full mt-5' />
-                        <div className='mt-4 text-center'>
-                            <p>Already have an account ? <Link className='underline text-green-700' to='/login'>Login</Link></p>
-                        </div>
-                        <div className="divider">OR</div>
-                        <button onClick={() => signInWithGoogle()} className="btn hover:bg-accent btn-outline w-full">Continue With Google</button>
-                        <ToastContainer />
+
+                       
+                        <input className='btn w-full max-w-xs text-white' type="submit" value="Sign Up" />
                     </form>
-
+                    <ToastContainer/>
                 </div>
             </div>
         </div>

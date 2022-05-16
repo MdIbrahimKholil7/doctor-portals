@@ -1,19 +1,37 @@
 import { format } from 'date-fns';
-import React, { useEffect, useState } from 'react';
+import { signOut } from 'firebase/auth';
+import React, { useState } from 'react';
+import { useAuthState } from 'react-firebase-hooks/auth';
 import { useQuery } from 'react-query';
+import { useNavigate } from 'react-router-dom';
+import auth from '../../../../_firebase_init';
 import Loading from '../../../Shared/Loading/Loading';
 import OpenModal from './OpenModal';
 import TreatmentCard from './TreatmentCard';
 
 const Treatment = ({ selected }) => {
-    // const [services, setServices] = useState([])
+    const [user]=useAuthState(auth)
+    const navigate=useNavigate()
     const [treatment, setTreatment] = useState(null)
     const date = format(selected, 'PP')
-    const { data: services, loading, refetch } = useQuery(['available',date],()=> fetch(`http://localhost:5000/available?date=${date}`)
-        .then(res => res.json()))
-    if(loading){
-        return <Loading/>
+    const { data: services, loading, refetch } = useQuery(['available', date], () => fetch(`http://localhost:5000/available?date=${date}&&email=${user.email}`,{
+        method:"GET",
+        headers:{
+            authorization:`Bearer ${localStorage.getItem('accessToken')}`
+        }
+    })
+        .then(res => {
+            console.log(res)
+            if(res.status === 401 || res.status === 403){
+                signOut(auth)
+                navigate('/')
+            }
+           return res.json()
+        }))
+    if (loading) {
+        return <Loading />
     }
+    console.log(services)
     return (
         <div className='px-5 mt-9 mb-32'>
             <p className='text-center text-xl text-secondary font-bold'>Available Appointment on {format(selected, 'PP')}</p>

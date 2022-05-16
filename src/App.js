@@ -10,6 +10,7 @@ import RequireAuth from './components/Page/Login/RequireAuth/RequireAuth';
 import Dashboard from './components/Page/Dashboard/Dashboard';
 import MyItem from './components/Page/Dashboard/MyItem';
 import Review from './components/Page/Dashboard/Review';
+import Alluser from './components/Page/Dashboard/Alluser';
 function App() {
   return (
     <div className="max-w-screen-2xl mx-auto ">
@@ -23,7 +24,8 @@ function App() {
         </Route>
         <Route path='/dashboard' element={<Dashboard />}>
           <Route index element={<MyItem />} />
-          <Route path='/dashboard/review' element={<Review />} />
+          <Route path='review' element={<Review />} />
+          <Route path='alluser' element={<Alluser />} />
         </Route>
         <Route path='/login' element={<Login />} />
         <Route path='/signup' element={<SignUp />} />

@@ -3,9 +3,11 @@ import { useAuthState, useSignInWithEmailAndPassword, useSignInWithGoogle } from
 import { useForm } from "react-hook-form";
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import auth from '../../../../_firebase_init';
+import useToken from '../../../hooks/useToken';
 import Loading from '../../../Shared/Loading/Loading';
 const Login = () => {
     const [user] = useAuthState(auth)
+    const [token]=useToken(user)
     const { register, handleSubmit, watch, formState: { errors } } = useForm();
     const [signInWithGoogle, gUser, gLoading, gError] = useSignInWithGoogle(auth);
     const [
@@ -19,14 +21,14 @@ const Login = () => {
     let from = location.state?.from?.pathname || "/";
     useEffect(() => {
         if (loginUser || gUser) {
-            navigate(from)
+            navigate(from, { replace: true })
         }
     }, [loginUser,gUser,navigate,from])
 
     if (loading || gLoading) {
         return <Loading />
     }
-
+    console.log(from)
     const onSubmit = data => {
         signInWithEmailAndPassword(data.email, data.password)
     }
@@ -89,7 +91,7 @@ const Login = () => {
 
                         <input type="submit" value='Login' className='btn w-full mt-5' />
                         <div className='mt-4'>
-                            <p>New to Doctors Portal ? <Link className='underline text-green-700' to='/signup'>Create New Account</Link></p>
+                            <p>New to Doctors Portal ? <Link className='underline text-green-700' to='/signup' state={{ from: from }} replace>Create New Account</Link></p>
                         </div>
                         <div className="divider">OR</div>
                         <button onClick={() => signInWithGoogle()} className="btn hover:bg-accent btn-outline w-full">Continue With Google</button>

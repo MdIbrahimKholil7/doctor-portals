@@ -18,7 +18,6 @@ const Navbar = () => {
         <li><Link to='/contact'>Contact Us</Link></li>
         {user && <li><Link to='/dashboard'>Dashboard</Link></li>}
         {user ? <button className='btn bg-accent rounded-full text-white' onClick={handleSignOut}>Logout</button> : <li><Link to='/login'>Login</Link></li>}
-
     </>
     return (
         <div className='sticky top-0 z-50'>
