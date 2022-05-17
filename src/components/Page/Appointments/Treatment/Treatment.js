@@ -14,7 +14,7 @@ const Treatment = ({ selected }) => {
     const navigate=useNavigate()
     const [treatment, setTreatment] = useState(null)
     const date = format(selected, 'PP')
-    const { data: services, loading, refetch } = useQuery(['available', date], () => fetch(`http://localhost:5000/available?date=${date}&&email=${user.email}`,{
+    const { data: services, loading, refetch } = useQuery(['available', date], () => fetch(`http://localhost:5000/available?date=${date}&email=${user.email}`,{
         method:"GET",
         headers:{
             authorization:`Bearer ${localStorage.getItem('accessToken')}`
@@ -24,6 +24,7 @@ const Treatment = ({ selected }) => {
             console.log(res)
             if(res.status === 401 || res.status === 403){
                 signOut(auth)
+                localStorage.removeItem('accessToken')
                 navigate('/')
             }
            return res.json()

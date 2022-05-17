@@ -11,6 +11,8 @@ import Dashboard from './components/Page/Dashboard/Dashboard';
 import MyItem from './components/Page/Dashboard/MyItem';
 import Review from './components/Page/Dashboard/Review';
 import Alluser from './components/Page/Dashboard/Alluser';
+import RequireAdmin from './components/Page/Login/RequireAuth/RequireAdmin';
+import AddDoctor from './components/Page/Dashboard/AddDoctor';
 function App() {
   return (
     <div className="max-w-screen-2xl mx-auto ">
@@ -25,7 +27,8 @@ function App() {
         <Route path='/dashboard' element={<Dashboard />}>
           <Route index element={<MyItem />} />
           <Route path='review' element={<Review />} />
-          <Route path='alluser' element={<Alluser />} />
+          <Route path='alluser' element={<RequireAdmin><Alluser /></RequireAdmin>} />
+          <Route path='addDoctor' element={<RequireAdmin><AddDoctor /></RequireAdmin>} />
         </Route>
         <Route path='/login' element={<Login />} />
         <Route path='/signup' element={<SignUp />} />
