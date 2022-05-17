@@ -28,9 +28,9 @@ const Alluser = () => {
     }
 
     return (
-        <div className='mt-24'>
-            <div className=' text-center'>
-                <h1 className='text-black'>All User</h1>
+        <div className='mt-[700px]'>
+            <div className=' text-center mb-6'>
+                <h1 className='text-black font-bold text-3xl'>All User</h1>
             </div>
             {
                 users?.length && <div className=''>

@@ -1,56 +1,51 @@
 import React from 'react';
 import { useForm } from "react-hook-form";
 import { useQuery } from 'react-query';
-import './AddDoctor.css'
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 const AddDoctor = () => {
 
-    const { register, handleSubmit, watch, formState: { errors } } = useForm();
-    const { data: services } = useQuery('doctorService', () => fetch('http://localhost:5000/doctorService').then(res => res.json()))
+    const { register, handleSubmit, watch, reset, formState: { errors } } = useForm();
+    const { data: services, } = useQuery('doctorService', () => fetch('http://localhost:5000/doctorService').then(res => res.json()))
 
     const onSubmit = async data => {
-        
+
         const image = data.image[0]
+        console.log(data.name, data.email)
         const formData = new FormData()
         formData.append('image', image)
         console.log(formData)
-       
-        const url=`https://api.imgbb.com/1/upload?key=${process.env.REACT_APP_Api_Key_Img}`
-        fetch(url,{
-            method:'POST',
-            body:formData
-        }).then(res=>res.json())
-        .then(data=>{
-            if(data.success){
-                const doctorDetails = {
-                    name: data.name,
-                    email: data.email,
-                    specialize: data.specialty,
-                    img:data.url
-                } 
-                fetch('http://localhost:5000/addDoctor',{
-                    method:'POST',
-                    headers:{
-                        'content-type':'application/json'
-                    },
-                    body:JSON.stringify(doctorDetails)
-                }).then(res=>res.json())
-                .then(result=>{
-                    console.log(result)
-                })
-            }
-        })
-        /*  const doctorDetails = {
-             name: data.name,
-             email: data.email,
-             specialize: data.specialty
-         }   
-         fetch('http://localhost:5000/doctorService', {
-             method: "POST",
-             headers: {
-                 'content-type': 'application/json'
-             },
-             body: JSON.stringify(doctorDetails)
-         }) */
+
+        const url = `https://api.imgbb.com/1/upload?key=${process.env.REACT_APP_Api_Key_Img}`
+        fetch(url, {
+            method: 'POST',
+            body: formData
+        }).then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    const doctorDetails = {
+                        name: data.name,
+                        email: data.email,
+                        specialize: data.specialty,
+                        img: data.url
+                    }
+                    fetch('http://localhost:5000/addDoctor', {
+                        method: 'POST',
+                        headers: {
+                            'content-type': 'application/json',
+                            authorization: `Bearer ${localStorage.getItem('accessToken')}`
+                        },
+                        body: JSON.stringify(doctorDetails)
+                    }).then(res => res.json())
+                        .then(result => {
+                            console.log(result)
+                            if (result.insertedId) {
+                                toast('Doctor add successful')
+                            }
+                            reset()
+                        })
+                }
+            })
     }
     return (
         <div className='flex justify-center items-center h-screen '>
@@ -133,11 +128,11 @@ const AddDoctor = () => {
                                 })}
                             />
                         </div>
-                        <input className='btn w-full max-w-xs text-white' type="submit" value="Sign Up" />
+                        <input className='btn w-full max-w-xs text-white' type="submit" value="Add" />
                     </form>
-
                 </div>
             </div>
+            <ToastContainer />
         </div>
     );
 
