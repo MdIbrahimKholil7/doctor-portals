@@ -1,33 +1,33 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useForm } from "react-hook-form";
 import { useQuery } from 'react-query';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Loading from '../../Shared/Loading/Loading'
 const AddDoctor = () => {
 
     const { register, handleSubmit, watch, reset, formState: { errors } } = useForm();
-    const { data: services, } = useQuery('doctorService', () => fetch('http://localhost:5000/doctorService').then(res => res.json()))
+    const { data: services } = useQuery('doctorService', () => fetch('http://localhost:5000/doctorService').then(res => res.json()))
+    const [loading, setLoading] = useState(false)
 
     const onSubmit = async data => {
 
         const image = data.image[0]
-        console.log(data.name, data.email)
         const formData = new FormData()
         formData.append('image', image)
-        console.log(formData)
-
+        setLoading(true)
         const url = `https://api.imgbb.com/1/upload?key=${process.env.REACT_APP_Api_Key_Img}`
         fetch(url, {
             method: 'POST',
             body: formData
         }).then(res => res.json())
-            .then(data => {
-                if (data.success) {
+            .then(datas => {
+                if (datas.success) {
                     const doctorDetails = {
                         name: data.name,
                         email: data.email,
                         specialize: data.specialty,
-                        img: data.url
+                        img: datas.data.url
                     }
                     fetch('http://localhost:5000/addDoctor', {
                         method: 'POST',
@@ -38,8 +38,10 @@ const AddDoctor = () => {
                         body: JSON.stringify(doctorDetails)
                     }).then(res => res.json())
                         .then(result => {
-                            console.log(result)
+
+
                             if (result.insertedId) {
+                                setLoading(false)
                                 toast('Doctor add successful')
                             }
                             reset()
@@ -48,8 +50,12 @@ const AddDoctor = () => {
             })
     }
     return (
-        <div className='flex justify-center items-center h-screen '>
-            <div className="card bg-base-100 shadow-xl w-96">
+        <div className='flex justify-center items-center h-screen'>
+            {
+                loading && <Loading />
+            }
+
+            <div className={`card bg-base-100 shadow-xl w-96 mt-96  ${loading && 'hidden'}`}>
                 <div className="card-body">
                     <form onSubmit={handleSubmit(onSubmit)}>
                         <div className="form-control w-full max-w-xs">

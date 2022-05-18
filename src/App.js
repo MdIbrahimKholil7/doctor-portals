@@ -25,7 +25,7 @@ function App() {
             <Appointments />
           </RequireAuth>} >
         </Route>
-        <Route path='/dashboard' element={<Dashboard />}>
+        <Route path='/dashboard' element={<RequireAuth><Dashboard/></RequireAuth>}>
           <Route index element={<MyItem />} />
           <Route path='review' element={<Review />} />
           <Route path='alluser' element={<RequireAdmin><Alluser /></RequireAdmin>} />
