@@ -14,7 +14,7 @@ const Treatment = ({ selected }) => {
     const navigate=useNavigate()
     const [treatment, setTreatment] = useState(null)
     const date = format(selected, 'PP')
-    const { data: services, loading, refetch } = useQuery(['available', date], () => fetch(`http://localhost:5000/available?date=${date}&email=${user.email}`,{
+    const { data: services, loading, refetch } = useQuery(['available', date], () => fetch(`https://mysterious-plateau-40111.herokuapp.com/available?date=${date}&email=${user.email}`,{
         method:"GET",
         headers:{
             authorization:`Bearer ${localStorage.getItem('accessToken')}`

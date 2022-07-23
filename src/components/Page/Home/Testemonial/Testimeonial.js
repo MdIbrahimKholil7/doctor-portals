@@ -43,7 +43,6 @@ const Testimonial = () => {
                     slidesToScroll: 1,
                 }
             },
-        
         ]
     };
    
@@ -88,8 +87,8 @@ const Testimonial = () => {
         <div className='px-4 mt-20'>
             <div className='flex justify-between items-center'>
                 <div>
-                    <h1 className='text-xl text-secondary font-bold'>Testimonial</h1>
-                    <h2 className='text-3xl'>What Our Patients Says</h2>
+                    <h1 className='text-xl text-primary font-bold'>Testimonial</h1>
+                    <h2 className='text-4xl font-bold'>What Our Patients Says</h2>
                 </div>
                 <div>
                     <img className='w-48' src={quote} alt="" />

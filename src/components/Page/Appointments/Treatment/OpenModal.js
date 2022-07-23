@@ -4,47 +4,60 @@ import { useAuthState } from 'react-firebase-hooks/auth';
 import auth from '../../../../_firebase_init';
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
-import axios from 'axios';
 
-const OpenModal = ({ treatment, setTreatment, selected,refetch }) => {
-    const { name, slots,_id } = treatment || {}
+
+const OpenModal = ({ treatment, setTreatment, selected, refetch }) => {
+    const { name, slots, _id, price } = treatment || {}
     const [user] = useAuthState(auth)
     // const MySwal = withReactContent(Swal)
     const handleForm = async event => {
         event.preventDefault()
         console.log(event.target.slot.value)
         const book = {
-            treatmentId:_id,
+            treatmentId: _id,
             treatmentName: name,
-            slot:event.target.slot.value,
+            slot: event.target.slot.value,
             date: format(selected, 'PP'),
             patientName: user.displayName,
             email: user.email,
-            phone:event.target.number.value,
-            
+            phone: event.target.number.value,
+            price: price
         }
-        try{
-           const {data}= await axios.post('http://localhost:5000/book', book)
-            console.log(data)
-                if(data.success){
-                    Swal.fire({
-                        position: 'top-center',
-                        icon: 'success',
-                        title: 'Your appointment successful',
-                        showConfirmButton: false,
-                        timer: 2000
-                    })
-                }else{
-                    Swal.fire({
-                        position: 'top-center',
-                        icon: 'error',
-                        title:`You have already booked this appointment on ${data?.result?.date}`,
-                        showConfirmButton: false,
-                        timer: 2000
-                    })
-                }
-           
-        }catch(error){
+        console.log(book)
+        try {
+         /*    const { data } = await axios.post('https://mysterious-plateau-40111.herokuapp.com/book', book) */
+
+            fetch('https://mysterious-plateau-40111.herokuapp.com/book', {
+                method: "POST",
+                headers: {
+                    "content-type": "application/json"
+                },
+                body: JSON.stringify(book)
+            }).then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        Swal.fire({
+                            position: 'top-center',
+                            icon: 'success',
+                            title: 'Your appointment successful',
+                            showConfirmButton: false,
+                            timer: 5000
+                        })
+                    } else {
+                        Swal.fire({
+                            position: 'top-center',
+                            icon: 'error',
+                            title: `You have already booked this appointment on ${data?.result?.date}`,
+                            showConfirmButton: false,
+                            timer: 5000
+                        })
+                    }
+
+                })
+
+            
+
+        } catch (error) {
             console.log(error)
         }
         refetch()
@@ -63,7 +76,7 @@ const OpenModal = ({ treatment, setTreatment, selected,refetch }) => {
                             <input type="text" name='date' value={format(selected, 'PP')} placeholder="Type here" className="input input-bordered w-full" disabled />
                             <select name='slot' className="input input-bordered w-full" >
                                 {
-                                    slots.length && slots.map((elem, index) => <option  value={elem} key={index}>{elem}</option>)
+                                    slots.length && slots.map((elem, index) => <option value={elem} key={index}>{elem}</option>)
                                 }
                             </select>
                             <input type="text" name='name' value={user.displayName} readOnly placeholder="Full Name" className="input input-bordered w-full" required />

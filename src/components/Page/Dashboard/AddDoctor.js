@@ -7,7 +7,7 @@ import Loading from '../../Shared/Loading/Loading'
 const AddDoctor = () => {
 
     const { register, handleSubmit, watch, reset, formState: { errors } } = useForm();
-    const { data: services } = useQuery('doctorService', () => fetch('http://localhost:5000/doctorService').then(res => res.json()))
+    const { data: services } = useQuery('doctorService', () => fetch('https://mysterious-plateau-40111.herokuapp.com/doctorService').then(res => res.json()))
     const [loading, setLoading] = useState(false)
 
     const onSubmit = async data => {
@@ -29,7 +29,7 @@ const AddDoctor = () => {
                         specialize: data.specialty,
                         img: datas.data.url
                     }
-                    fetch('http://localhost:5000/addDoctor', {
+                    fetch('https://mysterious-plateau-40111.herokuapp.com/addDoctor', {
                         method: 'POST',
                         headers: {
                             'content-type': 'application/json',

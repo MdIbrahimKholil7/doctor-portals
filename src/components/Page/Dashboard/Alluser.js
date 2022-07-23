@@ -5,7 +5,7 @@ import Loading from '../../Shared/Loading/Loading';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 const Alluser = () => {
-    const { data: users, loading,refetch } = useQuery(['booking'], () => fetch(`http://localhost:5000/users`)
+    const { data: users, loading,refetch } = useQuery(['booking'], () => fetch(`https://mysterious-plateau-40111.herokuapp.com/users`)
         .then(res => res.json()))
     console.log(users)
     if (loading) {
@@ -13,7 +13,7 @@ const Alluser = () => {
     }
 
     const makeAdmin = (i) => {
-        fetch(`http://localhost:5000/users/admin/${i?.email}`, {
+        fetch(`https://mysterious-plateau-40111.herokuapp.com/users/admin/${i?.email}`, {
             method: "PUT",
             headers: {
                 authorization: `Bearer ${localStorage.getItem('accessToken')}`

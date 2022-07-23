@@ -2,7 +2,7 @@ import axios from 'axios';
 import { signOut } from 'firebase/auth';
 import React, { useEffect, useState } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import auth from '../../../_firebase_init';
 import axiosPrivate from '../../api/axiosPrivate';
 import Loading from '../../Shared/Loading/Loading'
@@ -14,14 +14,13 @@ const MyItem = () => {
     useEffect(() => {
         if (user?.email) {
             try {
-                fetch(`http://localhost:5000/myData?email=${user?.email}`, {
+                fetch(`https://mysterious-plateau-40111.herokuapp.com/myData?email=${user?.email}`, {
                     method: "GET",
                     headers: {
                         'authorization': `Bearer ${localStorage.getItem('accessToken')}`
                     }
                 })
                     .then(res => {
-                        console.log(res)
                         if (res.status === 401 || res.status === 403) {
                             signOut(auth)
                             navigate('/')
@@ -33,16 +32,15 @@ const MyItem = () => {
                         setLoad(false)
                     })
             } catch (error) {
-                console.log(error)
+          
                 console.log('this is error', error)
             }
         }
     }, [user, navigate])
-    console.log(item)
     if (load) {
         return <Loading />
     }
-
+    console.log(item)
     return (
         <div>
             {
@@ -54,7 +52,7 @@ const MyItem = () => {
                                 <th>Date</th>
                                 <th>Time</th>
                                 <th>Treatment</th>
-
+                                <th>Payment</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -65,6 +63,12 @@ const MyItem = () => {
                                     <td>{i.date}</td>
                                     <td>{i.slot}</td>
                                     <td>{i.treatmentName}</td>
+                                    <td>
+                                        {(i.price && !i.paid) && <Link to={`/dashboard/payment/${i._id}`} className='btn bg-accent '>Pay</Link>}
+                                    {
+                                        i.paid && <small>Paid</small>
+                                    }
+                                    </td>
                                 </tr>)
                             }
 

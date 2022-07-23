@@ -8,7 +8,7 @@ const ContactUs = () => {
             backgroundSize: 'cover',
             backgroundPosition: 'center'
         }}
-        className='h-[100vh] mt-20 p-9 md:p-20 flex justify-center items-center flex-col'
+        className='h-[100vh] mt-20 p-9  md:p-20 flex justify-center items-center flex-col'
         >
             <div className='text-center mb-9'> 
                 <h1 className='text-secondary text-2xl font-bold'>Contact Us</h1>

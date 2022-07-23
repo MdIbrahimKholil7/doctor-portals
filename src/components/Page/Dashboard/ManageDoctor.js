@@ -4,7 +4,7 @@ import DeleteModal from '../../Shared/DeleteModal/DeleteModal';
 import Loading from '../../Shared/Loading/Loading';
 
 const ManageDoctor = () => {
-    const { data, loading,refetch } = useQuery('manageDoctor', () => fetch('http://localhost:5000/manageDoctor').then(res => res.json())
+    const { data, loading,refetch } = useQuery('manageDoctor', () => fetch('https://mysterious-plateau-40111.herokuapp.com/manageDoctor').then(res => res.json())
     )
     const [modal, setModal] = useState(null)
     if (loading) {

@@ -7,7 +7,7 @@ const useToken = (user) => {
     useEffect(() => {
         (async () => {
             if (email) {
-                const { data } = await axios.put(`http://localhost:5000/token`, { email })
+                const { data } = await axios.put(`https://mysterious-plateau-40111.herokuapp.com/token`, { email })
                 console.log(data)
                 localStorage.setItem('accessToken', data.accessToken)
                 setToken(data.accessToken)

@@ -1,6 +1,7 @@
 import React from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import auth from '../../../_firebase_init';
+import axiosPrivate from '../../api/axiosPrivate';
 import useAdmin from '../../hooks/useAdmin';
 import Loading from '../../Shared/Loading/Loading';
 const DeleteModal = ({ setModal, refetch, modal }) => {
@@ -8,20 +9,25 @@ const DeleteModal = ({ setModal, refetch, modal }) => {
     const [user] = useAuthState(auth)
     const [admin] = useAdmin(user)
     const deleteDoctor = () => {
-       
+
         if (admin) {
-            fetch(`http://localhost:5000/delete-doctor/${_id}`, {
-                method: 'DELETE',
-                headers:{
-                    authorization:`Bearer ${localStorage.getItem('accessToken')}`
-                }
-            })
-                .then(res => res.json())
-                .then(data => {
-                    setModal(null)
-                    refetch()
-                    console.log(data)
-                })
+            /*  fetch(`https://mysterious-plateau-40111.herokuapp.com/delete-doctor/${_id}`, {
+                 method: 'DELETE',
+                 headers:{
+                     authorization:`Bearer ${localStorage.getItem('accessToken')}`
+                 }
+             })
+                 .then(res => res.json())
+                 .then(data => {
+                     setModal(null)
+                     refetch()
+                     console.log(data)
+                 }) */
+
+            (async () => {
+                const data = await axiosPrivate.delete(`https://mysterious-plateau-40111.herokuapp.com/delete-doctor/${_id}`).then(res=>res.json())
+                console.log(data)
+            })()
         }
     }
     return (
