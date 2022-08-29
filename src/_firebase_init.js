@@ -14,8 +14,6 @@
 //   appId:process.env.REACT_APP_App_Id,
 // };
 
-
-
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
@@ -24,15 +22,13 @@ import { getAuth } from "firebase/auth";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyA_utZx_8G9O61x_xus09FAG-Uz6BcQSMQ",
-  authDomain: "doctor-portals-2.firebaseapp.com",
-  projectId: "doctor-portals-2",
-  storageBucket: "doctor-portals-2.appspot.com",
-  messagingSenderId: "590752152200",
-  appId: "1:590752152200:web:60eec61c9f2b610c64fd3d"
+  apiKey: "AIzaSyAKDe18_ArUtW5693xRgpLgtL1oy6NCKhM",
+  authDomain: "doctor-portals-3.firebaseapp.com",
+  projectId: "doctor-portals-3",
+  storageBucket: "doctor-portals-3.appspot.com",
+  messagingSenderId: "1062678018147",
+  appId: "1:1062678018147:web:4c659e982c906b76bc6056"
 };
-
-
 
 
 
