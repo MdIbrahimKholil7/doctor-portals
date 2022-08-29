@@ -55,7 +55,7 @@ const AddDoctor = () => {
                 loading && <Loading />
             }
 
-            <div className={`card bg-base-100 shadow-xl w-96 mt-96  ${loading && 'hidden'}`}>
+            <div className={`card bg-base-100 shadow-xl w-96 mt-10  ${loading && 'hidden'}`}>
                 <div className="card-body">
                     <form onSubmit={handleSubmit(onSubmit)}>
                         <div className="form-control w-full max-w-xs">
